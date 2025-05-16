@@ -9,7 +9,7 @@ export const chatController = {
     const chatId = await chatService.getLastChat({ userId: id });
     res.status(200).json({
       message: "Get last chat successfully",
-      data: chatId,
+      data: { id: chatId },
     });
   }),
 

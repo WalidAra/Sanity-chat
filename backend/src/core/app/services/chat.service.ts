@@ -51,12 +51,6 @@ export const chatService = {
       throw new ConstraintError("No last chat found", 404);
     }
 
-    const chat = await chatRepo.getChatById({ chatId: lastChatId });
-
-    if (!chat) {
-      throw new ConstraintError("Chat not found", 404);
-    }
-
-    return chat;
+    return lastChatId;
   },
 };

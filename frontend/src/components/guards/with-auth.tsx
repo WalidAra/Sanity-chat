@@ -9,7 +9,7 @@ export function withAuth<P extends object>(Component: React.ComponentType<P>) {
     const { pathname } = useLocation();
     const { data, isPending, isError } = useQuery({
       enabled: !!accessToken,
-      queryKey: ["last-chat"],
+      queryKey: ["last-opened-chat"],
       queryFn: () =>
         fetchData<{ id: string }>({
           endpoint: "last",
