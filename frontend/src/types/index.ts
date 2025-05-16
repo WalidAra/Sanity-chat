@@ -24,3 +24,12 @@ export type User = {
   email: string;
   createdAt: Date;
 };
+
+export type CreatedChat = {
+  id: string;
+  isGroup: boolean;
+  name: string | null;
+  image: string | null;
+  adminId: string | null;
+  createdAt: Date;
+};

@@ -4,7 +4,7 @@ type ChatsRefetchContextType = {
   refetch: () => void;
 };
 
-const ChatsRefetchContext = React.createContext<ChatsRefetchContextType>({
+export const ChatsRefetchContext = React.createContext<ChatsRefetchContextType>({
   refetch: () => {},
 });
 

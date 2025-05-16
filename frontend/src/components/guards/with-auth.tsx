@@ -11,7 +11,7 @@ export function withAuth<P extends object>(Component: React.ComponentType<P>) {
       enabled: !!accessToken,
       queryKey: ["last-chat"],
       queryFn: () =>
-        fetchData({
+        fetchData<{ id: string }>({
           endpoint: "last",
           method: "GET",
           feature: "chat",
@@ -28,9 +28,9 @@ export function withAuth<P extends object>(Component: React.ComponentType<P>) {
     if (isPending) {
       return <div>Loading chat information...</div>;
     }
-
+    console.log(data)
     if (!isError && data) {
-      return <Navigate to={`/home/${data.data}`} replace />;
+      return <Navigate to={`/home/chat/${data.data.id}`} replace />;
     }
     if (isError && pathname !== "/home") {
       // Consider showing an error message instead of redirecting
