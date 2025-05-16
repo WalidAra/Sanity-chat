@@ -18,10 +18,9 @@ function formatToTimeOnly(isoDate: string): string {
 
 const ChatCard = ({ chat }: Props) => {
   const chatName = chat.isGroup ? chat.name : chat.members[0].user.name;
-  console.log(chat);
   return (
     <Link
-      to={`/home/chat/${chat.id}}`}
+      to={`/home/chat/${chat.id}`}
       key={chat.id}
       className="flex flex-col items-start gap-2 whitespace-nowrap border-b p-4 text-sm leading-tight last:border-b-0 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
     >
@@ -29,7 +28,13 @@ const ChatCard = ({ chat }: Props) => {
         <div className="flex items-center gap-2">
           <Avatar>
             <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarFallback>
+              {chatName
+                ?.split(" ")
+                .map((n) => n[0])
+                .join("")
+                .toUpperCase()}
+            </AvatarFallback>
           </Avatar>
 
           <span>{chatName}</span>

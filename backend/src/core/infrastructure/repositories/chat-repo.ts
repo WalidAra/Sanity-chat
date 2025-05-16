@@ -36,17 +36,28 @@ export const chatRepo = {
         },
       },
     });
-    
+
     return chats;
   },
 
-  getChatById: async ({ chatId }: { chatId: string }) => {
+  getChatById: async ({
+    chatId,
+    userId,
+  }: {
+    chatId: string;
+    userId: string;
+  }) => {
     const chat = await prisma.chat.findUnique({
       where: {
         id: chatId,
       },
       include: {
         members: {
+          where: {
+            NOT: {
+              userId: userId,
+            },
+          },
           include: {
             user: {
               select: {

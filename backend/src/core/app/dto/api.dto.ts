@@ -1,10 +1,18 @@
-import {
-  Chat as ChatType,
-  Member,
-  Message,
-  Attachment,
-  Reaction,
-} from "../../../../generated/prisma";
+export const MessageTypes = {
+  SIMPLE: "SIMPLE",
+  COMPLEX: "COMPLEX",
+} as const;
+
+export type MessageType = (typeof MessageTypes)[keyof typeof MessageTypes];
+
+export const ReactionTypes = {
+  LOVE: "LOVE",
+  LAUGH: "LAUGH",
+  SAD: "SAD",
+  ANGRY: "ANGRY",
+} as const;
+
+export type ReactionType = (typeof ReactionTypes)[keyof typeof ReactionTypes];
 
 export type User = {
   id: string;
@@ -14,8 +22,19 @@ export type User = {
   createdAt: Date;
 };
 
-export type Chat = ChatType & {
-  members: (Member & {
+export type Chat = {
+  id: string;
+  isGroup: boolean;
+  name: string | null;
+  image: string | null;
+  adminId: string | null;
+  createdAt: Date;
+} & {
+  members: ({
+    id: string;
+    userId: string;
+    chatId: string;
+  } & {
     user: {
       name: string;
       id: string;
@@ -25,9 +44,28 @@ export type Chat = ChatType & {
   admin: {
     id: string;
   } | null;
-  messages: (Message & {
-    attachments: Attachment[];
-    reactions: Reaction[];
+  messages: ({
+    id: string;
+    chatId: string;
+    senderId: string;
+    content: string;
+    type: MessageType;
+    createdAt: Date;
+    updatedAt: Date;
+  } & {
+    attachments: {
+      id: string;
+      messageId: string;
+      url: string;
+    }[];
+    reactions: {
+      id: string;
+      userId: string;
+      messageId: string;
+      type: ReactionType;
+      createdAt: Date;
+      updatedAt: Date;
+    }[];
     sender: {
       id: string;
       name: string;
@@ -41,7 +79,7 @@ export type Chats = {
   isGroup: boolean;
   name: string | null;
   image: string | null;
-  createdAt: string; 
+  createdAt: string;
   members: {
     user: {
       id: string;

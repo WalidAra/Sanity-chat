@@ -17,7 +17,7 @@ export const chatService = {
     if (!chatId) {
       throw new ConstraintError("Chat not found", 404);
     }
-    const chat = await chatRepo.getChatById({ chatId });
+    const chat = await chatRepo.getChatById({ chatId, userId });
 
     if (!chat) {
       throw new ConstraintError("Chat not found", 404);
