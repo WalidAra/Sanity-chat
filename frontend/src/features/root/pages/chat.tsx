@@ -7,13 +7,12 @@ import fetchData from "@/lib/fetcher";
 import { useAuth } from "@/hooks/use-auth";
 import { Chat as ChatProps } from "@/types";
 import MessageCard from "../components/molecules/message-card";
-// import MessageCard from "../components/molecules/message-card";
 
 const Chat = () => {
   const { id } = useParams();
   const { accessToken } = useAuth();
 
-  const { data, isPending } = useQuery({
+  const { data, isPending, refetch } = useQuery({
     queryKey: ["chat", id],
     queryFn: () =>
       fetchData<ChatProps>({
@@ -23,8 +22,6 @@ const Chat = () => {
         accessToken,
       }),
   });
-
-  console.log("chat data", data?.data);
 
   return (
     <div className="flex-1 flex flex-col ">
@@ -42,24 +39,9 @@ const Chat = () => {
       />
 
       <div className="flex flex-1 flex-col gap-4 py-4 px-8">
-        <MessageCard isSender />
-        <MessageCard isSender={false} />
-        <MessageCard isSender={false} />
-        <MessageCard isSender />
-        <MessageCard isSender={false} />
-        <MessageCard isSender={false} />
-        <MessageCard isSender />
-        <MessageCard isSender={false} />
-        <MessageCard isSender={false} />
-        <MessageCard isSender />
-        <MessageCard isSender={false} />
-        <MessageCard isSender={false} />
-        <MessageCard isSender />
-        <MessageCard isSender={false} />
-        <MessageCard isSender={false} />
-        <MessageCard isSender />
-        <MessageCard isSender={false} />
-        <MessageCard isSender={false} />
+        {data?.data.messages.map((msg) => (
+          <MessageCard isSender={false} />
+        ))}
       </div>
       <MessageForm />
     </div>
