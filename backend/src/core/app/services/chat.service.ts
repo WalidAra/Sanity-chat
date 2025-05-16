@@ -27,7 +27,23 @@ export const chatService = {
 
     return chat;
   },
-  // createChat: async (chatData: any) => {},
+
+  createChat: async (
+    chatData: {
+      name?: string;
+      image?: string;
+      isGroup?: boolean;
+      adminId?: string;
+      members: string[];
+    },
+    userId: string
+  ) => {
+    chatData.members.push(userId);
+    const newChat = await chatRepo.createChat(chatData);
+    await redisClient.hSet("last-chat", userId, newChat.id);
+    return newChat;
+  },
+
   getLastChat: async ({ userId }: { userId: string }) => {
     const lastChatId = await redisClient.hGet("last-chat", userId);
 

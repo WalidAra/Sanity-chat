@@ -32,4 +32,14 @@ export const chatController = {
       data: chats,
     });
   }),
+
+  createNewChat: TryCatchBlock(async (req: Request, res: Response) => {
+    const { id } = (req as RequestWithAuth).auth;
+    const chat = await chatService.createChat(req.body, id);
+
+    res.status(201).json({
+      message: "Create new chat successfully",
+      data: chat,
+    });
+  }),
 };

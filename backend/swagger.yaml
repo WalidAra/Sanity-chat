@@ -148,9 +148,9 @@ paths:
                     items:
                       type: object
                       example:
-                        id: "user123"
-                        name: "Walid Araar"
-                        email: "walid@example.com"
+                        id: user123
+                        name: Walid Araar
+                        email: walid@example.com
                   message:
                     type: string
                     example: User profiles retrieved successfully
@@ -182,8 +182,68 @@ paths:
                     items:
                       type: object
                       example:
-                        id: "chat123"
+                        id: chat123
                         participants: [user1, user2]
+        '401':
+          description: Unauthorized
+        '500':
+          description: Server error
+
+    post:
+      tags:
+        - Chat
+      summary: Create a new chat
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - members
+              properties:
+                name:
+                  type: string
+                  example: Study Group
+                image:
+                  type: string
+                  format: uri
+                  example: https://example.com/image.png
+                isGroup:
+                  type: boolean
+                  example: true
+                adminId:
+                  type: string
+                  example: user123
+                members:
+                  type: array
+                  items:
+                    type: string
+                  example: ["user123", "user456"]
+      responses:
+        '201':
+          description: Create new chat successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Create new chat successfully
+                  data:
+                    type: object
+                    example:
+                      id: chat789
+                      name: Study Group
+                      image: https://example.com/image.png
+                      isGroup: true
+                      adminId: user123
+                      members: ["user123", "user456"]
+        '400':
+          description: Invalid input
         '401':
           description: Unauthorized
         '500':
@@ -210,7 +270,7 @@ paths:
                   data:
                     type: object
                     example:
-                      id: "chat123"
+                      id: chat123
                       participants: [user1, user2]
         '404':
           description: No last chat found
@@ -247,7 +307,7 @@ paths:
                   data:
                     type: object
                     example:
-                      id: "chat123"
+                      id: chat123
                       participants: [user1, user2]
         '404':
           description: Chat not found

@@ -12,9 +12,9 @@ export function withAuth<P extends object>(Component: React.ComponentType<P>) {
       queryKey: ["last-chat"],
       queryFn: () =>
         fetchData({
-          endpoint: "last-chat",
+          endpoint: "last",
           method: "GET",
-          feature: "chats",
+          feature: "chat",
           accessToken,
         }),
     });

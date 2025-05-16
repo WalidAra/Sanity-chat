@@ -103,5 +103,7 @@ export const chatRepo = {
         },
       },
     });
+
+    return chat;
   },
 };
