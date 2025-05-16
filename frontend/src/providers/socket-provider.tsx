@@ -12,9 +12,11 @@ const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (socket) {
-      socket.on("connect", () => {
-        console.log("✅ Connected to server with id:", socket.id);
-      });
+      socket.connect();
+
+      return () => {
+        socket.disconnect();
+      };
     }
   }, [socket]);
 

@@ -21,6 +21,8 @@ import { Input } from "@/components/ui/input";
 import fetchData from "@/lib/fetcher";
 import { AccessToken } from "@/types";
 import { useAuth } from "@/hooks/use-auth";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 const SignUp = () => {
   const form = useForm<z.infer<typeof signUpSchema>>({
@@ -37,7 +39,7 @@ const SignUp = () => {
     mutationKey: ["sign-up"],
     mutationFn: async (values: z.infer<typeof signUpSchema>) => {
       return await fetchData<AccessToken>({
-        endpoint: "register",
+        endpoint: "sign-up",
         feature: "auth",
         method: "POST",
         payload: values,
@@ -46,8 +48,10 @@ const SignUp = () => {
     onSuccess: ({ data: { accessToken } }) => {
       signToken(accessToken);
     },
-    onError: (err) => {
-      console.log(err);
+    onError: (err: unknown) => {
+      if (err instanceof AxiosError) {
+        toast.error(err.response?.data.message, { position: "bottom-center" });
+      }
     },
   });
 

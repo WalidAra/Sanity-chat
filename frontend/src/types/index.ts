@@ -17,10 +17,10 @@ export type FetchResponse<T> = {
 export type AccessToken = {
   accessToken: string;
 };
-
-export type Chat = {
+export type User = {
   id: string;
-  isGroup: boolean;
-  name: string | null;
-  ownerId: string | null;
+  image: string | null;
+  name: string;
+  email: string;
+  createdAt: Date;
 };

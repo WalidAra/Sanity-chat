@@ -1,12 +1,51 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import SearchInput from "../components/atoms/search-input";
 import { LuList } from "react-icons/lu";
 import { LucideGrid2X2 } from "lucide-react";
 import UserCard from "../components/molecules/user-card";
+import { useMutation } from "@tanstack/react-query";
+import fetchData from "@/lib/fetcher";
+import { useAuth } from "@/hooks/use-auth";
+import { User } from "@/types";
 
 const Search = () => {
+  const { accessToken } = useAuth();
   const [isGridLayout, setIsGridLayout] = useState(true);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  const { mutate, data } = useMutation({
+    mutationFn: (search: string) =>
+      fetchData<User[]>({
+        endpoint: `search?search=${search}`,
+        feature: "user",
+        method: "GET",
+        accessToken,
+      }),
+    mutationKey: ["search"],
+    onSuccess: (data) => {
+      console.log("Search results:", data);
+    },
+  });
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [search]);
+
+  useEffect(() => {
+    if (debouncedSearch.trim() !== "") {
+      mutate(debouncedSearch);
+    }
+  }, [debouncedSearch]);
+
+  const users = useMemo(() => {
+    return data?.data || [];
+  }, [data?.data]);
 
   return (
     <div className="flex flex-col gap-6 p-4">
@@ -15,7 +54,7 @@ const Search = () => {
       </h1>
 
       <div className="flex items-center w-full justify-between">
-        <SearchInput />
+        <SearchInput value={search} setValue={setSearch} />
 
         <div className="gap-2 flex items-center">
           <Button
@@ -36,20 +75,15 @@ const Search = () => {
       </div>
 
       <div
-        className={`flex border rounded-2xl p-4 ${
-          isGridLayout ? "grid-cols-3 grid gap-4" : "flex-col gap-2"
+        className={`gap-4 ${
+          isGridLayout
+            ? "grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
+            : "flex flex-col"
         }`}
       >
-        <UserCard />
-        <UserCard />
-        <UserCard />
-        <UserCard />
-        <UserCard />
-        <UserCard />
-        <UserCard />
-        <UserCard />
-        <UserCard />
-        <UserCard />
+        {users.map((user, index) => (
+          <UserCard user={user} key={index} />
+        ))}
       </div>
     </div>
   );
