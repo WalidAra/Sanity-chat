@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Provider {
+  GOOGLE
+  MAIL
+}
+
+  model User {
+    id        String   @id @default(cuid())
+    name      String
+    email     String   @unique
+    password  String
+    image     String?
+    provider  Provider
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    ownedChats Chat[]     @relation("AdminChat")
+    members    Member[]
+    Messages   Message[]
+    reactions  Reaction[]
+  }
+
+  model Chat {
+    id        String   @id @default(cuid())
+    isGroup   Boolean  @default(false)
+    name      String?
+    image     String?
+    adminId   String?
+    createdAt DateTime @default(now())
+
+    members  Member[]
+    messages Message[]
+    admin    User?     @relation("AdminChat", fields: [adminId], references: [id])
+  }
+
+  model Member {
+    id        String   @id @default(cuid())
+    userId    String
+    chatId    String
+
+    user User @relation(fields: [userId], references: [id])
+    chat Chat @relation(fields: [chatId], references: [id])
+
+    @@unique([userId, chatId])
+  }
+
+  enum MessageType {
+    SIMPLE // just a text message
+    COMPLEX // a message with just images
+  }
+
+  model Message {
+    id        String      @id @default(cuid())
+    chatId    String
+    senderId  String
+    content   String
+    type      MessageType @default(SIMPLE)
+    createdAt DateTime    @default(now())
+    updatedAt DateTime    @updatedAt
+
+    sender      User         @relation(fields: [senderId], references: [id])
+    chat        Chat         @relation(fields: [chatId], references: [id])
+    attachments Attachment[]
+    reactions   Reaction[]
+  }
+
+  model Attachment {
+    id        String @id @default(cuid())
+    messageId String
+    url       String
+
+    message Message @relation(fields: [messageId], references: [id])
+  }
+
+  enum ReactionType {
+    LOVE
+    LAUGH
+    SAD
+    ANGRY
+  }
+
+  model Reaction {
+    id        String       @id @default(cuid())
+    messageId String
+    userId    String
+    type      ReactionType
+    createdAt DateTime     @default(now())
+    updatedAt DateTime     @updatedAt
+
+    message Message @relation(fields: [messageId], references: [id])
+    user    User    @relation(fields: [userId], references: [id])
+  }
