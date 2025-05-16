@@ -7,8 +7,11 @@ export function withAuth<P extends object>(Component: React.ComponentType<P>) {
   return function AuthenticatedComponent(props: P) {
     const { accessToken } = useAuth();
     const { pathname } = useLocation();
-    const { data, isPending, isError } = useQuery({
-      enabled: !!accessToken,
+
+    const shouldFetch = !!accessToken && !pathname.includes("/home/chat");
+
+    const { data, isPending } = useQuery({
+      enabled: shouldFetch,
       queryKey: ["last-opened-chat"],
       queryFn: () =>
         fetchData<{ id: string }>({
@@ -17,27 +20,21 @@ export function withAuth<P extends object>(Component: React.ComponentType<P>) {
           feature: "chat",
           accessToken,
         }),
+      retry: false,
     });
 
-    // 1. Handle authentication first
-    if (!accessToken) {
-      return <Navigate to="/auth/sign-in" replace />;
+    if (!accessToken) return <Navigate to="/auth/sign-in" replace />;
+
+    if (shouldFetch && isPending)
+      return <div className="loading">Loading...</div>;
+
+    if (data) {
+      const {
+        data: { id },
+      } = data;
+      return <Navigate to={`/home/chat/${id}`} replace />;
     }
 
-    // 2. Show loading state while checking last chat
-    if (isPending) {
-      return <div>Loading chat information...</div>;
-    }
-    console.log(data)
-    if (!isError && data) {
-      return <Navigate to={`/home/chat/${data.data.id}`} replace />;
-    }
-    if (isError && pathname !== "/home") {
-      // Consider showing an error message instead of redirecting
-      return <Navigate to={`/home`} />;
-    }
-
-    // 5. Finally render the protected component
     return <Component {...props} />;
   };
 }

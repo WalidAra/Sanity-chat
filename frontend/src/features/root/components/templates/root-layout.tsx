@@ -7,14 +7,15 @@ import ChatsRefetchProvider from "@/providers/chats-refetch-provider";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
 import fetchData from "@/lib/fetcher";
+import { ChatWithMembersAndLastMessage } from "@/types";
 
 function RootLayout() {
   const { accessToken } = useAuth();
 
-  const { refetch, data , isPending } = useQuery({
+  const { refetch, data, isPending } = useQuery({
     queryKey: ["user-chats"],
     queryFn: () =>
-      fetchData({
+      fetchData<ChatWithMembersAndLastMessage[]>({
         endpoint: "",
         feature: "chat",
         method: "GET",
@@ -36,7 +37,7 @@ function RootLayout() {
             } as React.CSSProperties
           }
         >
-          <AppSidebar chats={Array.isArray(data?.data) ? data.data : []} />
+          <AppSidebar chats={data?.data || []} />
           <SidebarInset>
             <Outlet />
           </SidebarInset>

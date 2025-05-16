@@ -24,6 +24,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { NavUser } from "../molecules/nav-user";
 import ChatsContainer from "../molecules/chats-container";
+import { ChatWithMembersAndLastMessage } from "@/types";
 
 // This is sample data
 const data = {
@@ -126,7 +127,9 @@ const data = {
 export function AppSidebar({
   chats,
   ...props
-}: React.ComponentProps<typeof Sidebar> & { chats: object[] }) {
+}: React.ComponentProps<typeof Sidebar> & {
+  chats: ChatWithMembersAndLastMessage[];
+}) {
   const [activeItem, setActiveItem] = React.useState(data.navMain[0]);
   const [mails, setMails] = React.useState(data.mails);
   const { setOpen } = useSidebar();
@@ -193,7 +196,7 @@ export function AppSidebar({
           </SidebarGroup>
         </SidebarContent>
         <SidebarFooter>
-          <NavUser  />
+          <NavUser />
         </SidebarFooter>
       </Sidebar>
 

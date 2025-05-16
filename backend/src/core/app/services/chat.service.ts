@@ -25,7 +25,7 @@ export const chatService = {
 
     await redisClient.hSet("last-chat", userId, chatId);
 
-    return chat;
+    return chat.getData();
   },
 
   createChat: async (
