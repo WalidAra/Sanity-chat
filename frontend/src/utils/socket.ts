@@ -7,7 +7,7 @@ class SocketInstance {
 
   private constructor(token: string) {
     this.socket = io(env.apiURl, {
-      auth: { token: `Bearer ${token}` },
+      auth: { token: `${env.apiKey} ${token}` },
     });
   }
 

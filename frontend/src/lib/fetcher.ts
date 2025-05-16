@@ -1,6 +1,9 @@
+import { env } from "@/config/env";
 import { Fetch, FetchResponse } from "@/types";
 import { api } from "@/utils/axios";
 import { AxiosRequestConfig } from "axios";
+
+const { apiKey, bearer } = env;
 
 const fetchData = async <T>({
   endpoint,
@@ -18,7 +21,7 @@ const fetchData = async <T>({
     url,
     headers: {
       "Content-Type": "application/json",
-      ...(accessToken && { ["authorization"]: `Bearer ${accessToken}` }),
+      ...(accessToken && { [bearer]: `${apiKey} ${accessToken}` }),
     },
     data: payload,
   };

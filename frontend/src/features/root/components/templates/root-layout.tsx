@@ -16,7 +16,7 @@ function RootLayout() {
     queryFn: () =>
       fetchData({
         endpoint: "",
-        feature: "chats",
+        feature: "chat",
         method: "GET",
         accessToken: accessToken,
       }),

@@ -30,7 +30,7 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 socketInitializer(httpServer);
 
-app.listen(config.port, () => {
+httpServer.listen(config.port, () => {
   console.log("\n====================================");
   console.log(chalk.blue(`\n- Server running on port:`), config.port);
   console.log(chalk.red(`~> http://localhost:${config.port}`));

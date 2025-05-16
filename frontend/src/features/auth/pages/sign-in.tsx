@@ -19,6 +19,8 @@ import { AiOutlineLoading } from "react-icons/ai";
 import PasswordInput from "../components/atoms/password-input";
 import { useAuth } from "@/hooks/use-auth";
 import { AccessToken } from "@/types";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 const SignIn = () => {
   const { signToken } = useAuth();
@@ -44,13 +46,14 @@ const SignIn = () => {
     onSuccess: ({ data: { accessToken } }) => {
       signToken(accessToken);
     },
-    onError: (err) => {
-      console.log(err);
+    onError: (err: unknown) => {
+      if (err instanceof AxiosError) {
+        toast.error(err.response?.data.message, { position: "bottom-center" });
+      }
     },
   });
 
   function onSubmit(values: z.infer<typeof signInSchema>) {
-    console.log("values => ", values);
     mutate(values);
   }
 
