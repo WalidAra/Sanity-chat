@@ -6,6 +6,7 @@ import { Unlock, Lock } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import fetchData from "@/lib/fetcher";
+import { useAuth } from "@/hooks/use-auth";
 
 type Props = {
   msg: {
@@ -40,6 +41,7 @@ type Props = {
 
 const MessageCard = ({ msg }: Props) => {
   const { user } = useUser();
+  const { accessToken } = useAuth();
   const [content, setContent] = useState<string>(msg.content);
   const [isEncrypted, setIsEncrypted] = useState<boolean>(true);
 
@@ -50,7 +52,7 @@ const MessageCard = ({ msg }: Props) => {
         endpoint: "decrypt",
         feature: "encrypt",
         method: "POST",
-        accessToken: "",
+        accessToken: accessToken,
         payload: {
           encryptedText: aesText,
         },
