@@ -1,38 +1,53 @@
 import { useAuth } from "@/hooks/use-auth";
 import fetchData from "@/lib/fetcher";
-import { useQuery } from "@tanstack/react-query";
-import { Navigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export function withAuth<P extends object>(Component: React.ComponentType<P>) {
   return function AuthenticatedComponent(props: P) {
     const { accessToken } = useAuth();
-    const { pathname } = useLocation();
+    const navigate = useNavigate();
 
-    const shouldFetch = !!accessToken && !pathname.includes("/home/chat");
+    const [data, setData] = useState<{ id: string } | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isError, setIsError] = useState(false);
 
-    const { data, isPending } = useQuery({
-      enabled: shouldFetch,
-      queryKey: ["last-opened-chat"],
-      queryFn: () =>
-        fetchData<{ id: string }>({
-          endpoint: "last",
-          method: "GET",
-          feature: "chat",
-          accessToken,
-        }),
-      retry: false,
-    });
+    useEffect(() => {
+      if (!accessToken) return;
 
-    if (!accessToken) return <Navigate to="/auth/sign-in" replace />;
+      setIsLoading(true);
+      setIsError(false);
 
-    if (shouldFetch && isPending)
-      return <div className="loading">Loading...</div>;
+      fetchData<{ id: string }>({
+        endpoint: "last",
+        method: "GET",
+        feature: "chat",
+        accessToken,
+      })
+        .then((res) => {
+          setData(res.data);
+          setIsLoading(false);
+        })
+        .catch(() => {
+          setIsError(true);
+          setIsLoading(false);
+        });
+    }, [accessToken]);
 
-    if (data) {
-      const {
-        data: { id },
-      } = data;
-      return <Navigate to={`/home/chat/${id}`} replace />;
+    useEffect(() => {
+      if (data?.id) {
+        navigate(`/home/chat/${data.id}`, { replace: true });
+      } else if (isError) {
+        navigate("/home", { replace: true });
+      }
+    }, [data, isError, navigate]);
+
+    if (!accessToken) {
+      return <Navigate to="/auth/sign-in" replace />;
+    }
+
+    if (isLoading) {
+      return null; // or a spinner/loading component
     }
 
     return <Component {...props} />;

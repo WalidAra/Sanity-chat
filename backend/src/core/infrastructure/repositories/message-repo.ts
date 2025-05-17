@@ -23,6 +23,8 @@ export const messageRepo = {
             : undefined,
       },
       include: {
+        attachments: true,
+        reactions: true,
         sender: {
           select: {
             id: true,
@@ -30,10 +32,9 @@ export const messageRepo = {
             image: true,
           },
         },
-        attachments: true,
-        reactions: true,
       },
     });
 
+    return message;
   },
 };

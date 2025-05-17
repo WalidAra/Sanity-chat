@@ -11,6 +11,7 @@ import socketInitializer from "./socket";
 import { createServer } from "node:http";
 import express, { Express, Request, Response } from "express";
 import chalk from "chalk";
+import { flash } from "./scripts/flash";
 
 const swaggerDocument = YAML.load("./swagger.yaml");
 const app: Express = express();
@@ -30,8 +31,9 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 socketInitializer(httpServer);
 
-httpServer.listen(config.port, () => {
+httpServer.listen(config.port, async () => {
   console.log("\n====================================");
+  await flash();
   console.log(chalk.blue(`\n- Server running on port:`), config.port);
   console.log(chalk.red(`~> http://localhost:${config.port}`));
   console.log(chalk.blackBright(`~> http://localhost:${config.port}/docs`));
