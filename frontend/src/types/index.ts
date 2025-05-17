@@ -2,7 +2,7 @@ import { Method } from "axios";
 
 export type Fetch = {
   accessToken?: string | null;
-  feature: "auth" | "user" | "chat";
+  feature: "auth" | "user" | "chat"|"encrypt";
   endpoint: string;
   method: Method;
   payload?: object;

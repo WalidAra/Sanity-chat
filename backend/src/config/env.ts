@@ -11,6 +11,8 @@ const envSchema = Joi.object({
   AUTH_KEY_HIDEOUT: Joi.string().required(),
   AUTH_BEARER: Joi.string().required(),
   REDIS_URL: Joi.string().required(),
+  AES_KEY: Joi.string().length(64).required(),
+  AES_IV: Joi.string().length(32).required(),
 }).unknown();
 
 const { error, value: envVars } = envSchema.validate(process.env);
@@ -27,6 +29,8 @@ interface EnvConfig {
   authKeyHideout: string;
   authBearer: string;
   redisUrl: string;
+  aesKey: string;
+  aesIv: string;
 }
 
 const config: EnvConfig = {
@@ -37,6 +41,8 @@ const config: EnvConfig = {
   authKeyHideout: envVars.AUTH_KEY_HIDEOUT,
   authBearer: envVars.AUTH_BEARER,
   redisUrl: envVars.REDIS_URL,
+  aesKey: envVars.AES_KEY,
+  aesIv: envVars.AES_IV,
 };
 
 export default config;

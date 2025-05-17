@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Unlock, Lock } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import fetchData from "@/lib/fetcher";
 
 type Props = {
   msg: {
@@ -45,28 +46,19 @@ const MessageCard = ({ msg }: Props) => {
   const { isPending, mutate } = useMutation({
     mutationKey: ["decrypt"],
     mutationFn: async (aesText: string) => {
-      const res = await fetch("https://sanity-encrypt.onrender.com/decrypt", {
+      const res = await fetchData({
+        endpoint: "decrypt",
+        feature: "encrypt",
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+        accessToken: "",
+        payload: {
+          encryptedText: aesText,
         },
-        body: JSON.stringify({
-          ciphertext: aesText,
-          iv: "your-iv-here",
-        }),
       });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.detail || "Failed to decrypt");
-      }
-
-      const data = await res.json();
-      return data; // { plaintext: string }
+      return res;
     },
     onSuccess: (data) => {
-      const { plaintext } = data;
-      setContent(plaintext);
+      setContent(data.data as string);
       setIsEncrypted(false);
       toast.success("Decrypted the message successfully", {
         position: "bottom-right",
