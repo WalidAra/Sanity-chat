@@ -33,7 +33,7 @@ socketInitializer(httpServer);
 
 httpServer.listen(config.port, async () => {
   console.log("\n====================================");
-  await flash();
+  // await flash();
   console.log(chalk.blue(`\n- Server running on port:`), config.port);
   console.log(chalk.red(`~> http://localhost:${config.port}`));
   console.log(chalk.blackBright(`~> http://localhost:${config.port}/docs`));

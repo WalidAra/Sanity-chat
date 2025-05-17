@@ -29,10 +29,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 import { useAuth } from "@/hooks/use-auth";
 import { User } from "@/types";
+import { useEffect } from "react";
+import { useUser } from "@/store/slices/user-slice";
 
 export function NavUser() {
   const { accessToken } = useAuth();
-
+  const { setUser } = useUser();
   const { data, isLoading } = useQuery({
     queryKey: ["user"],
     queryFn: () =>
@@ -46,6 +48,11 @@ export function NavUser() {
 
   const { isMobile } = useSidebar();
 
+  useEffect(() => {
+    if (data?.data) {
+      setUser(data.data);
+    }
+  }, [data?.data, setUser]);
 
   const user = data?.data;
 

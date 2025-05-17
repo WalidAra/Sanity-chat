@@ -17,7 +17,7 @@ const socketInitializer = (httpServer: import("node:http").Server) => {
 
     await redisClient.hSet("online-users", userId, socket.id);
     socket.on(
-      "first-message",
+      "message",
       async (
         data: {
           chatId: string;
@@ -38,25 +38,9 @@ const socketInitializer = (httpServer: import("node:http").Server) => {
         if (!receiverSocketId) return;
 
         io.to(receiverSocketId).socketsJoin(data.chatId);
-        io.to(receiverSocketId).emit("refresh-list", { refreshList: true });
-        io.to(data.chatId).emit("new-message", newMessage);
-      }
-    );
-
-    socket.on(
-      "message",
-      async (
-        data: {
-          chatId: string;
-          senderId: string;
-          content: string;
-          type?: MessageType;
-          attachments?: string[]; // URLs
-        },
-        receiverId: string
-      ) => {
-        socket.join(data.chatId);
-        const newMessage = await messageRepo.sendMessage(data);
+        io.to(receiverSocketId)
+          .to(socket.id)
+          .emit("refresh-list", { refreshList: true });
         io.to(data.chatId).emit("new-message", newMessage);
       }
     );

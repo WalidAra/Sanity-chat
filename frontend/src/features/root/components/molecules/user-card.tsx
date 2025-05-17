@@ -46,6 +46,7 @@ const UserCard = ({ user }: Props) => {
       toast.success("Chat created successfully");
     },
     onError: (err: unknown) => {
+      console.log("err", err);
       if (err instanceof AxiosError) {
         toast.error(err.response?.data.message);
       }

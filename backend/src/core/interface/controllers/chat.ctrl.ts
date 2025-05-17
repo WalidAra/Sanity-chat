@@ -35,6 +35,7 @@ export const chatController = {
 
   createNewChat: TryCatchBlock(async (req: Request, res: Response) => {
     const { id } = (req as RequestWithAuth).auth;
+    console.log("req.body", req.body);
     const chat = await chatService.createChat(req.body, id);
 
     res.status(201).json({

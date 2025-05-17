@@ -74,9 +74,6 @@ export const chatRepo = {
           },
         },
         messages: {
-          orderBy: {
-            createdAt: "desc",
-          },
           include: {
             attachments: true,
             reactions: true,
