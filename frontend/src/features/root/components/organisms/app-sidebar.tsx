@@ -1,11 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import * as React from "react";
-import {
-
-  Command, 
-  Search,
- 
-} from "lucide-react";
+import { Command, Search } from "lucide-react";
 
 import { Label } from "@/components/ui/label";
 import {
@@ -131,7 +125,7 @@ export function AppSidebar({
   chats: ChatWithMembersAndLastMessage[];
 }) {
   const [activeItem, setActiveItem] = React.useState(data.navMain[0]);
-  const [mails, setMails] = React.useState(data.mails);
+  const [, setMails] = React.useState(data.mails);
   const { setOpen } = useSidebar();
 
   return (
