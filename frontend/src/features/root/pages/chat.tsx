@@ -7,11 +7,13 @@ import fetchData from "@/lib/fetcher";
 import { useAuth } from "@/hooks/use-auth";
 import { Chat as ChatProps } from "@/types";
 import MessageCard from "../components/molecules/message-card";
+import { useEffect } from "react";
+import { useSocket } from "@/hooks/use-socket";
 
 const Chat = () => {
   const { id } = useParams();
   const { accessToken } = useAuth();
-
+  const socket = useSocket();
   const { data, isPending, refetch } = useQuery({
     queryKey: ["chat", id],
     queryFn: () =>
@@ -22,6 +24,19 @@ const Chat = () => {
         accessToken,
       }),
   });
+
+  useEffect(() => {
+    if (socket) {
+      const chatInfo: {
+        chatId: string;
+        senderId: string;
+        content: string;
+      } = {
+        chatId: id as string,
+      };
+      socket.on("first-message", {});
+    }
+  }, [socket]);
 
   return (
     <div className="flex-1 flex flex-col ">

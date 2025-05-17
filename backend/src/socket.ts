@@ -21,15 +21,15 @@ const socketInitializer = (httpServer: import("node:http").Server) => {
       async (
         data: {
           chatId: string;
-          senderId: string;
           content: string;
-          type?: MessageType;
-          attachments?: string[];
         },
         receiverId: string
       ) => {
         socket.join(data.chatId);
-        const newMessage = await messageRepo.sendMessage(data);
+        const newMessage = await messageRepo.sendMessage({
+          ...data,
+          senderId: userId,
+        });
         const receiverSocketId = await redisClient.hGet(
           "online-users",
           receiverId

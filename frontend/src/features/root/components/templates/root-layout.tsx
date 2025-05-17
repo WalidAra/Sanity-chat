@@ -8,10 +8,12 @@ import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
 import fetchData from "@/lib/fetcher";
 import { ChatWithMembersAndLastMessage } from "@/types";
+import { useEffect } from "react";
+import { useSocket } from "@/hooks/use-socket";
 
 function RootLayout() {
   const { accessToken } = useAuth();
-
+  const socket = useSocket();
   const { refetch, data, isPending } = useQuery({
     queryKey: ["user-chats"],
     queryFn: () =>
@@ -22,6 +24,22 @@ function RootLayout() {
         accessToken: accessToken,
       }),
   });
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("refresh-list", (data: { refreshList: boolean }) => {
+        if (data.refreshList) {
+          refetch();
+        }
+      });
+    }
+
+    return () => {
+      if (socket) {
+        socket.off("refresh-list");
+      }
+    };
+  }, [socket, refetch]);
 
   if (isPending) {
     return;
