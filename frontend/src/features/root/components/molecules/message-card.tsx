@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useUser } from "@/store/slices/user-slice";
 import { MessageType, ReactionType } from "@/types";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Unlock, Lock } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 type Props = {
   msg: {
@@ -40,16 +40,43 @@ type Props = {
 const MessageCard = ({ msg }: Props) => {
   const { user } = useUser();
   const [content, setContent] = useState<string>(msg.content);
-  const [isEncrypted, setIsEcnrypted] = useState<boolean>(true);
+  const [isEncrypted, setIsEncrypted] = useState<boolean>(true);
 
-  const { isPending, isIdle } = useMutation({
-    mutationKey: ["encrypt"],
-    mutationFn: async () => {},
-    onSuccess: (data) => {},
-    onError: (error) => {},
+  const { isPending, mutate } = useMutation({
+    mutationKey: ["decrypt"],
+    mutationFn: async (aesText: string) => {
+      const res = await fetch("https://sanity-encrypt.onrender.com/decrypt", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ciphertext: aesText,
+          iv: "your-iv-here",
+        }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.detail || "Failed to decrypt");
+      }
+
+      const data = await res.json();
+      return data; // { plaintext: string }
+    },
+    onSuccess: (data) => {
+      const { plaintext } = data;
+      setContent(plaintext);
+      setIsEncrypted(false);
+      toast.success("Decrypted the message successfully", {
+        position: "bottom-right",
+      });
+    },
   });
 
-  const handleToggleEncryption = async () => {};
+  const handleToggleEncryption = async () => {
+    mutate(msg.content);
+  };
 
   const isSender = msg.sender.id === user?.id;
   if (isSender) {
