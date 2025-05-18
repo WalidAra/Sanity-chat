@@ -1,7 +1,6 @@
 import { checkAuthSocket, SocketWithAuth } from "@/middlewares";
 import { Server, Socket } from "socket.io";
 import { redisClient } from "./helpers";
-import { MessageType } from "generated/prisma";
 import { messageRepo } from "./core/infrastructure/repositories/message-repo";
 
 const socketInitializer = (httpServer: import("node:http").Server) => {
@@ -35,12 +34,12 @@ const socketInitializer = (httpServer: import("node:http").Server) => {
           receiverId
         );
 
-        if (!receiverSocketId) return;
+        if (receiverSocketId) {
+          io.to(receiverSocketId).socketsJoin(data.chatId);
+          io.to(receiverSocketId).emit("refresh-list", { refreshList: true });
+        }
 
-        io.to(receiverSocketId).socketsJoin(data.chatId);
-        io.to(receiverSocketId)
-          .to(socket.id)
-          .emit("refresh-list", { refreshList: true });
+        io.to(socket.id).emit("refresh-list", { refreshList: true });
         io.to(data.chatId).emit("new-message", newMessage);
       }
     );
