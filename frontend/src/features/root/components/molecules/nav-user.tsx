@@ -33,7 +33,7 @@ import { useEffect } from "react";
 import { useUser } from "@/store/slices/user-slice";
 
 export function NavUser() {
-  const { accessToken } = useAuth();
+  const { accessToken , signOut } = useAuth();
   const { setUser } = useUser();
   const { data, isLoading } = useQuery({
     queryKey: ["user"],
@@ -128,7 +128,7 @@ export function NavUser() {
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={signOut}>
                 <LogOut />
                 Log out
               </DropdownMenuItem>
